@@ -16,7 +16,7 @@ builder.Services.AddDbContext<StoreContext>(opt =>
 });
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 
@@ -33,7 +33,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
- // <<<<<<<< I don't know exactly what these lines do >>>>>>>> 
+// <<<<<<<< I don't know exactly what these lines do >>>>>>>> 
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
 var context = services.GetRequiredService<StoreContext>();
@@ -43,7 +43,7 @@ try
     await context.Database.MigrateAsync();
     await SeedDataContext.SeedAsync(context);
 }
-catch (Exception ex )
+catch (Exception ex)
 {
     logger.LogError(ex, "Error during migration");
 }
