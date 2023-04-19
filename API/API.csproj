@@ -32,6 +32,7 @@
 
   <ItemGroup>
     <None Include="appsettings.Development.json" />
+    <None Include="wwwroot\images\.DS_Store" />
   </ItemGroup>
 
 </Project>
