@@ -4,6 +4,7 @@ using Core.Interfaces;
 using Core.Specifications;
 using API.DTOs;
 using AutoMapper;
+using API.Errors;
 
 namespace API.Controllers
 {
@@ -41,6 +42,11 @@ namespace API.Controllers
         {
             var spec = new ProductWithTypesAndBrandsSpecifications(id);
             var product =  await _productRepo.GetEntityWithSpec(spec);
+            if (product == null)
+            {
+                return NotFound(new ApiResponse(404));
+            }
+
             return _mapper.Map<Product, ProductDto>(product);
         }
 
