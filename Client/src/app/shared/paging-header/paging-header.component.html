@@ -1,0 +1,9 @@
+<header *ngIf="totalCount && pageIndex && pageSize">
+    <span *ngIf="totalCount > 0">Showing
+        <strong>
+            {{(pageIndex -1) * pageSize + 1}} -
+            {{pageIndex *pageSize > totalCount
+            ? totalCount : pageIndex * pageSize }}
+        </strong> of <strong>{{totalCount}}</strong> results</span>
+    <span *ngIf="totalCount === 0"> 0 results</span>
+</header>

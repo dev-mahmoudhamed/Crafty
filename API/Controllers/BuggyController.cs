@@ -29,7 +29,7 @@ namespace API.Controllers
         {
             var item = _context.Products.Find(241);
             var itemToReturn = item.ToString();
-            return Ok();
+            return Ok(itemToReturn);
         }
 
 
