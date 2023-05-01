@@ -1,0 +1,10 @@
+<div class="container">
+
+    <h3> Internal Server Error - Please reload the page </h3>
+    <ng-container *ngIf="error">
+        <h5 class="text-danger"> Error: {{error.Message}} </h5>
+
+        <h4>Stack trace</h4>
+        <code class="mt-5" style="background-color :white;"> {{error.Details}} </code>
+    </ng-container>
+</div>
