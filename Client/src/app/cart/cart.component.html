@@ -1,0 +1,81 @@
+<div class="container mt-3">
+    <div *ngIf="(cartService.cartSource$ | async) === null">
+        <p>Cart is Empty</p>
+    </div>
+
+    <ng-container *ngIf="(cartService.cartSource$ | async) as cart">
+        <div class="container">
+            <div class="row">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead class="bg-light text-uppercase">
+                            <tr>
+                                <th>
+                                    <div class="py-2">Product</div>
+                                </th>
+                                <th>
+                                    <div class="py-2">Price</div>
+                                </th>
+                                <th>
+                                    <div class="py-2">Quantity</div>
+                                </th>
+                                <th>
+                                    <div class="py-2">Total</div>
+                                </th>
+                                <th>
+                                    <div class="py-2">Remove</div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of cart.items">
+                                <th>
+                                    <div class="p-2 d-inline-block">
+                                        <img [src]="item.pictureUrl" [alt]="item.productName" class="img-fluid">
+                                        <div class="ms-3 d-inline-block align-middle">
+                                            <h5 class="mb-0">
+                                                <a class="text-dark text-decoration-none">
+                                                    {{item.productName}}
+                                                </a>
+                                            </h5>
+                                            <span class="text-muted fst-italic">
+                                                Type: {{item.type}}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </th>
+                                <td class="align-middle"> <strong>{{item.price | currency}}</strong></td>
+                                <td class="align-middle">
+                                    <div class="d-flex align-items-center">
+                                        <i (click)="removeItem(item.id, item.quantity)"
+                                            class="fa fa-minus-circle text-info me-2"></i>
+                                        <strong style="font-size: 1.5em;">{{item.quantity}}</strong>
+                                        <i (click)="incrementQuantity(item)"
+                                            class="fa fa-plus-circle text-info mx-2"></i>
+                                    </div>
+                                </td>
+                                <td class="align-middle"> <strong> {{item.price * item.quantity | currency}}</strong>
+                                </td>
+                                <td class="align-middle">
+                                    <a class="text-danger">
+                                        <i (click)="removeItem(item.id, item.quantity)" class="fa fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="offset-6 col-6">
+                    <app-order-totals> </app-order-totals>
+                    <div class="d-grid">
+                        <a routerLink="/checkout" class="btn btn-outline-primary py-2">Proceed to checkout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+</div>

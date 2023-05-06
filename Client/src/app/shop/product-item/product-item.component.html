@@ -6,7 +6,7 @@
         </a>
         <span style="font-weight: bold;"> {{product.price | currency}}</span>
         <div class="btn-group mt-auto">
-            <button class="btn btn-outline-secondary fa fa-shopping-cart me-2"></button>
+            <button (click)="addItemToCart()" class="btn btn-outline-secondary fa fa-shopping-cart me-2"></button>
             <button class="btn btn-outline-primary" routerLink="/shop/{{product.id}}">View</button>
         </div>
     </div>

@@ -13,6 +13,8 @@ const routes: Routes = [
 
   //lazyLoading shopComponent 
   { path: 'shop', loadChildren: () => import('./shop/shop.module').then(m => m.ShopModule) },
+  { path: 'cart', loadChildren: () => import('./cart/cart.module').then(m => m.CartModule) },
+  { path: 'checkout', loadChildren: () => import('./checkout/checkout.module').then(m => m.CheckoutModule) },
   { path: '**', redirectTo: '', pathMatch: 'full' },
 ];
 
