@@ -1,29 +1,45 @@
 using API.Errors;
 using API.Middleware;
+using Core.Entities.Identity;
 using Core.Interfaces;
 using Infrastructure.Data;
+using Infrastructure.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
+using System.Text;
+using Infrastructure.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<StoreContext>(opt =>
 {
     opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+builder.Services.AddDbContext<AppIdentityDbContext>(opt =>
+{
+    opt.UseSqlite(builder.Configuration.GetConnectionString("IdentityConnection"));
+});
 builder.Services.AddSingleton<IConnectionMultiplexer>(c =>
 {
     var options = ConfigurationOptions.Parse(builder.Configuration.GetConnectionString("Redis"));
     return ConnectionMultiplexer.Connect(options);
 });
+builder.Services.AddIdentityCore<AppUser>(opt =>
+{
+}).AddEntityFrameworkStores<AppIdentityDbContext>()
+  .AddSignInManager<SignInManager<AppUser>>();
 
+builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
@@ -53,7 +69,19 @@ builder.Services.AddCors(opt =>
         policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200");
     });
 });
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Token:Key"])),
+        ValidIssuer = builder.Configuration["Token:Issuer"],
+        ValidateIssuer = true,
+        ValidateAudience = false,
+    };
+});
 
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -67,6 +95,7 @@ app.UseSwaggerUI();
 app.UseHttpsRedirection();
 app.UseCors("CorsPolicy");
 app.UseStaticFiles();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
@@ -75,11 +104,15 @@ app.MapControllers();
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
 var context = services.GetRequiredService<StoreContext>();
+var identityContext = services.GetRequiredService<AppIdentityDbContext>();
+var userManager = services.GetRequiredService<UserManager<AppUser>>();
 var logger = services.GetRequiredService<ILogger<Program>>();
 try
 {
     await context.Database.MigrateAsync();
+    await identityContext.Database.MigrateAsync();
     await SeedDataContext.SeedAsync(context);
+    await AppIdentityDbContextSeed.SeedUserAsync(userManager);
 }
 catch (Exception ex)
 {

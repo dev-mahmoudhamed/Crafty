@@ -1,5 +1,6 @@
 ﻿using API.Errors;
 using Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -43,6 +44,14 @@ namespace API.Controllers
         public ActionResult GetNotFoundRequset(int id)
         {
             return Ok();
+        }
+
+
+        [Authorize]
+        [HttpGet("testauth")]
+        public string Get()
+        {
+            return "Password";
         }
     }
 }
