@@ -31,6 +31,7 @@ namespace API.Controllers
         [HttpGet, Authorize]
         public async Task<ActionResult<UserDto>> GetCurrentUser()
         {
+            Console.WriteLine("\n\n\n\n\n\n\n\n Helloooooooo \n\n\n\n\n\n");
             var email = User.FindFirstValue(ClaimTypes.Email);
             var user = await _userManager.FindByEmailAsync(email);
             return new UserDto
@@ -39,6 +40,12 @@ namespace API.Controllers
                 Token = _tokenService.CreateToken(user),
                 DisplayName = user.DisplayName
             };
+        }
+
+        [HttpGet("emailexists")]
+        public async Task<ActionResult<bool>> CheckEmailExistsAsync([FromQuery] string email)
+        {
+            return await _userManager.FindByEmailAsync(email) != null;
         }
 
         [HttpGet("address"), Authorize]
@@ -67,7 +74,6 @@ namespace API.Controllers
 
 
         [HttpPost("login")]
-        [Authorize]
         public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
         {
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
@@ -90,9 +96,18 @@ namespace API.Controllers
             };
         }
 
+
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
         {
+            if (CheckEmailExistsAsync(registerDto.Email).Result.Value)
+            {
+                return new BadRequestObjectResult(new ApiValidationErrorResponse
+                {
+                    Errors = new[] { "Email address already is in use" }
+                });
+            }
+
             var user = new AppUser
             {
                 DisplayName = registerDto.DisplayName,

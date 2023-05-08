@@ -12,7 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
 using System.Text;
 using Infrastructure.Services;
-
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,20 +20,48 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    var securitySchema = new OpenApiSecurityScheme
+    {
+        Description = "JWT Auth Bearer Scheme",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        Reference = new OpenApiReference
+        {
+            Type = ReferenceType.SecurityScheme,
+            Id = "Bearer"
+        }
+    };
+    c.AddSecurityDefinition("Bearer", securitySchema);
+
+    var securityRequirement = new OpenApiSecurityRequirement
+    {
+        {
+            securitySchema, new[] {"Bearer"}
+        }
+    };
+    c.AddSecurityRequirement(securityRequirement);
+});
+
 builder.Services.AddDbContext<StoreContext>(opt =>
 {
     opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
 builder.Services.AddDbContext<AppIdentityDbContext>(opt =>
 {
     opt.UseSqlite(builder.Configuration.GetConnectionString("IdentityConnection"));
 });
+
 builder.Services.AddSingleton<IConnectionMultiplexer>(c =>
 {
     var options = ConfigurationOptions.Parse(builder.Configuration.GetConnectionString("Redis"));
     return ConnectionMultiplexer.Connect(options);
 });
+
 builder.Services.AddIdentityCore<AppUser>(opt =>
 {
 }).AddEntityFrameworkStores<AppIdentityDbContext>()
