@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Data.Config
 {
-    internal class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
+    public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
     {
         public void Configure(EntityTypeBuilder<OrderItem> builder)
         {
@@ -13,8 +13,6 @@ namespace Infrastructure.Data.Config
                 io.WithOwner();
             });
             builder.Property(i => i.Price).HasColumnType("decimal(18,2)");
-
-            builder.HasNoKey();
         }
     }
 }

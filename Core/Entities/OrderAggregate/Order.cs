@@ -5,16 +5,16 @@
         public Order()
         {
         }
-        public Order(IReadOnlyList<OrderItem> orderItems, string byuerEmail, Address shipToAddress, DeliveryMethod deliveryMethod, decimal subtotal)
+        public Order(IReadOnlyList<OrderItem> orderItems, string buyerEmail, Address shipToAddress, DeliveryMethod deliveryMethod, decimal subtotal)
         {
-            ByuerEmail = byuerEmail;
+            BuyerEmail = buyerEmail;
             ShipToAddress = shipToAddress;
             DeliveryMethod = deliveryMethod;
             OrderItems = orderItems;
             Subtotal = subtotal;
         }
 
-        public string ByuerEmail { get; set; }
+        public string BuyerEmail { get; set; }
         public DateTime OrderDate { get; set; } = DateTime.Now;
         public Address ShipToAddress { get; set; }
         public DeliveryMethod DeliveryMethod { get; set; }

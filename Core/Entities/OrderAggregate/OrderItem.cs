@@ -1,8 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace Core.Entities.OrderAggregate
+﻿namespace Core.Entities.OrderAggregate
 {
-    public class OrderItem
+    public class OrderItem : BaseEntity
     {
         public OrderItem()
         {

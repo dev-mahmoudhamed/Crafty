@@ -14,12 +14,10 @@ namespace Infrastructure.Data
         {
             _context = context;
         }
-
         public async Task<int> CountAsync(ISpecification<T> spec)
         {
             return await ApplySpecification(spec).CountAsync();
         }
-
         public async Task<IReadOnlyList<T>> GetAllAsync()
         {
             return await _context.Set<T>().ToListAsync();
@@ -38,6 +36,22 @@ namespace Infrastructure.Data
         public async Task<IReadOnlyList<T>> ListAsync(ISpecification<T> spec)
         {
             return await ApplySpecification(spec).ToListAsync();
+        }
+
+        public void Add(T entity)
+        {
+            _context.Set<T>().Add(entity);
+        }
+
+        public void Update(T entity)
+        {
+            _context.Set<T>().Attach(entity);
+            _context.Entry(entity).State = EntityState.Modified;
+        }
+
+        public void Delete(T entity)
+        {
+            _context.Set<T>().Remove(entity);
         }
 
         private IQueryable<T> ApplySpecification(ISpecification<T> spec)
