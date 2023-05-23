@@ -4,7 +4,6 @@ using API.Errors;
 using AutoMapper;
 using Core.Entities.OrderAggregate;
 using Core.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StackExchange.Redis;
 using System.Security.Claims;
@@ -25,7 +24,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Order>> CreateOrder(OrderDto orderDto)
+        public async Task<ActionResult<Core.Entities.OrderAggregate.Order>> CreateOrder(OrderDto orderDto)
         {
             var email = User.FindFirstValue(ClaimTypes.Email);
             var address = _mapper.Map<AddressDto, Address>(orderDto.ShipToAddress);

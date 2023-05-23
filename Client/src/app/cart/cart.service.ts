@@ -4,6 +4,8 @@ import { environment } from 'src/environments/environment';
 import { Cart, CartItem, CartTotals } from '../shared/models/cart';
 import { HttpClient } from '@angular/common/http';
 import { Product } from '../shared/models/products';
+import { DeliveryMethod } from '../shared/models/deliveryMethod';
+
 
 @Injectable({
   providedIn: 'root'
@@ -15,9 +17,15 @@ export class CartService {
   cartSource$ = this.cartSource.asObservable();
   private cartTotalSource = new BehaviorSubject<CartTotals | null>(null);
   cartTotalSource$ = this.cartTotalSource.asObservable();
+  shipping = 0;
 
 
   constructor(private http: HttpClient) { }
+
+  setShippingPrice(deliveryMethod: DeliveryMethod) {
+    this.shipping = deliveryMethod.price;
+    this.calculateTotals();
+  }
 
   getCart(id: string) {
     return this.http.get<Cart>(this.baseUrl + 'cart?id=' + id).subscribe({
@@ -70,11 +78,15 @@ export class CartService {
   deleteCart(cart: Cart) {
     return this.http.delete(this.baseUrl + 'cart?id=' + cart.id).subscribe({
       next: () => {
-        this.cartSource.next(null);
-        this.cartTotalSource.next(null);
-        localStorage.removeItem('cart_id');
+        this.deleteLocalCart();
       }
     });
+  }
+
+  deleteLocalCart() {
+    this.cartSource.next(null);
+    this.cartTotalSource.next(null);
+    localStorage.removeItem('cart_id');
   }
 
   private addOrUpdateItem(items: CartItem[], itemToAdd: CartItem, quantity: number): CartItem[] {
@@ -111,11 +123,12 @@ export class CartService {
     const cart = this.getCurrentCartValue();
     if (!cart) return;
 
-    const shipping = 0;
-    const subtotal = cart.items.reduce((prev, cur) => (cur.price * cur.quantity) + prev, 0);
-    const total = subtotal + shipping;
-    this.cartTotalSource.next({ shipping, total, subtotal });
+    const subtotal = cart.items.reduce((a, b) => (b.price * b.quantity) + a, 0);
+    const total = subtotal + this.shipping;
+    this.cartTotalSource.next({ shipping: this.shipping, total, subtotal });
   }
+
+
   private isProduct(item: Product | CartItem): item is Product {
     return (item as Product).productBrand !== undefined;
   }
