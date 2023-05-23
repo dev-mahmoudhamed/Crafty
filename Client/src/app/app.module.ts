@@ -8,11 +8,13 @@ import { CoreModule } from './core/core.module';
 import { HomeModule } from './home/home.module';
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';
 import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
+import { OrderDetailedComponent } from './order-detailed/order-detailed.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
+    OrderDetailedComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,7 +1,7 @@
 import { Address } from "./user";
 
 export interface OrderToCreate {
-    cartId: string;
+    basketId: string;
     deliveryMethodId: number;
     shipToAddress: Address;
 }
@@ -15,6 +15,7 @@ export interface Order {
     shippingPrice: number;
     orderItems: OrderItem[];
     subtotal: number;
+    total: number;
     status: string;
 }
 
