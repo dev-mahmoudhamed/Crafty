@@ -67,6 +67,7 @@ builder.Services.AddIdentityCore<AppUser>(opt =>
 }).AddEntityFrameworkStores<AppIdentityDbContext>()
   .AddSignInManager<SignInManager<AppUser>>();
 
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<ITokenService, TokenService>();

@@ -1,7 +1,7 @@
 import { Address } from "./user";
 
 export interface OrderToCreate {
-    basketId: string;
+    cartId: string;
     deliveryMethodId: number;
     shipToAddress: Address;
 }

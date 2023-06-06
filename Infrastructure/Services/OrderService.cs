@@ -42,7 +42,6 @@ namespace Infrastructure.Services
             var spec = new OrderByPaymentIntentIdSpecification(cart.PaymentIntentId);
             var order = await _unitOfWork.Repository<Order>().GetEntityWithSpec(spec);
 
-
             if (order != null)
             {
                 order.ShipToAddress = shippingAddress;

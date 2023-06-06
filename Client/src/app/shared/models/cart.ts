@@ -11,8 +11,12 @@ export interface CartItem {
 }
 
 export interface Cart {
-    id: string
-    items: CartItem[]
+    id: string;
+    items: CartItem[];
+    clientSecret?: string;
+    paymentIntentId?: string;
+    deliveryMethodId?: number;
+    shippingPrice: number;
 }
 
 export class Cart implements Cart {
