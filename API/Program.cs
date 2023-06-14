@@ -13,6 +13,8 @@ using StackExchange.Redis;
 using System.Text;
 using Infrastructure.Services;
 using Microsoft.OpenApi.Models;
+using System.Net.NetworkInformation;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -125,12 +127,19 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.UseCors("CorsPolicy");
+
 app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Content")),
+    RequestPath = "/Content"
+});
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
+app.MapFallbackToController("Index", "Fallback");
 // <<<<<<<< I don't know exactly what these lines do >>>>>>>> 
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;

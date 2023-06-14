@@ -1,0 +1,1 @@
+# Proof of Concept e-commerce store using Angular, .Net and Stripe for payment processing
